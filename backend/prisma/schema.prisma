@@ -55,6 +55,9 @@ model Product {
   sku            String   @unique
   category       String
   unitPrice      Float
+  mrp            Float?
+  gstRate        Float?   @default(18)
+  uom            String?  @default("PCS")
   currentStock   Int
   minStockAlert  Int
   location       String

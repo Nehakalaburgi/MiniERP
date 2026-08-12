@@ -15,17 +15,20 @@ export const getProducts = async (req: AuthenticatedRequest, res: Response) => {
 
 export const createProduct = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, sku, category, unitPrice, currentStock, minStockAlert, location } = req.body;
+    const { name, sku, category, unitPrice, mrp, gstRate, uom, currentStock, minStockAlert, location } = req.body;
 
     const product = await prisma.product.create({
       data: {
         name,
         sku,
-        category,
+        category: category || 'General',
         unitPrice: parseFloat(unitPrice),
+        mrp: mrp ? parseFloat(mrp) : undefined,
+        gstRate: gstRate ? parseFloat(gstRate) : 18,
+        uom: uom || 'PCS',
         currentStock: parseInt(currentStock),
         minStockAlert: parseInt(minStockAlert),
-        location,
+        location: location || 'Rack A1',
       },
     });
 

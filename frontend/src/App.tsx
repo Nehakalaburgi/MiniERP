@@ -94,23 +94,11 @@ const MainContent: React.FC = () => {
         </header>
 
         {/* Tab View Selectors */}
-{activeTab === 'customers' && <CustomerCRM />}
+        {activeTab === 'customers' && <CustomerCRM />}
 
-{activeTab === 'inventory' && <ProductInventory />}
+        {activeTab === 'inventory' && <ProductInventory />}
 
-{activeTab === 'challans' && <SalesChallanModule />}
-
-        {activeTab === 'inventory' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-slate-300">
-            <p>📦 Product Inventory Module ready. (Next step: Add Stock Table & Create Product Modal)</p>
-          </div>
-        )}
-
-        {activeTab === 'challans' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-slate-300">
-            <p>📋 Sales Challan Module ready. (Next step: Add Challan Form & Snapshots logic)</p>
-          </div>
-        )}
+        {activeTab === 'challans' && <SalesChallanModule />}
       </main>
     </div>
   );
