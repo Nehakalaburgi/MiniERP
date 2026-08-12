@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("SALES") // ADMIN, SALES, WAREHOUSE, ACCOUNTS
+  createdAt DateTime @default(now())
+
+  followUpNotes FollowUpNote[]
+  stockLogs     StockMovementLog[]
+  salesChallans SalesChallan[]
+}
+
+model Customer {
+  id           String    @id @default(uuid())
+  name         String
+  mobile       String
+  email        String
+  businessName String
+  gstNumber    String?
+  type         String    @default("RETAIL") // RETAIL, WHOLESALE, DISTRIBUTOR
+  address      String
+  status       String    @default("LEAD") // LEAD, ACTIVE, INACTIVE
+  followUpDate DateTime?
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  followUpNotes FollowUpNote[]
+  salesChallans SalesChallan[]
+}
+
+model FollowUpNote {
+  id         String   @id @default(uuid())
+  customerId String
+  note       String
+  createdBy  String
+  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [createdBy], references: [id])
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  sku            String   @unique
+  category       String
+  unitPrice      Float
+  currentStock   Int
+  minStockAlert  Int
+  location       String
+  createdAt      DateTime @default(now())
+
+  stockLogs    StockMovementLog[]
+  challanItems SalesChallanItem[]
+}
+
+model StockMovementLog {
+  id              String   @id @default(uuid())
+  productId       String
+  quantityChanged Int
+  movementType    String   // IN, OUT
+  reason          String
+  createdBy       String
+  timestamp       DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [createdBy], references: [id])
+}
+
+model SalesChallan {
+  id            String   @id @default(uuid())
+  challanNumber String   @unique
+  customerId    String
+  totalQuantity Int
+  status        String   @default("DRAFT") // DRAFT, CONFIRMED, CANCELLED
+  createdBy     String
+  createdAt     DateTime @default(now())
+
+  customer Customer           @relation(fields: [customerId], references: [id])
+  user     User               @relation(fields: [createdBy], references: [id])
+  items    SalesChallanItem[]
+}
+
+model SalesChallanItem {
+  id                  String @id @default(uuid())
+  challanId           String
+  productId           String
+  productNameSnapshot String
+  unitPriceSnapshot   Float
+  skuSnapshot         String
+  quantity            Int
+
+  challan SalesChallan @relation(fields: [challanId], references: [id], onDelete: Cascade)
+  product Product      @relation(fields: [productId], references: [id])
+}
